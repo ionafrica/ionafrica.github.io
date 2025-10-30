@@ -1,70 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IonAfrica – Flags & Stories</title>
-  <style>
-    body{margin:0;font-family:Arial,sans-serif;background:#fdf6ec;color:#222}
-    header{background:linear-gradient(90deg,#00853f,#fcd116,#e8112d);color:#fff;text-align:center;padding:32px}
-    h1{margin:0 0 8px;font-size:28px}
-    .search{display:flex;justify-content:center;gap:8px;margin:16px}
-    .search input{padding:10px 12px;border-radius:8px;border:1px solid #ccc;width:240px}
-    .btn{padding:12px 18px;border:1px solid #333;border-radius:12px;text-decoration:none;color:#111;background:#fff}
-    .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));max-width:900px;margin:0 auto}
-    .card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;text-align:center}
-    .flag{font-size:40px}
-    footer{text-align:center;margin:32px;color:#666}
-  </style>
-</head>
-<body>
-  <header>
-    <h1>IonAfrica is live 🌍</h1>
-    <p>Discover Africa’s flags & stories — bilingual (EN/FR) coming next.</p>
-  </header>
+<script>
+  // 1) Put your PayPal link here when you have it.
+  // Example PayPal.Me: "https://www.paypal.me/IonAfrica"
+  // Example Hosted Donate Button: "https://www.paypal.com/donate/?hosted_button_id=YOUR_ID"
+  const PAYPAL_LINK = ""; // leave blank to use QR fallback
 
-  <div class="search">
-    <input id="search" type="text" placeholder="Search a country…" />
-    <a href="#" class="btn" id="donateBtn">Donate</a>
-  </div>
+  // 2) Flags list
+  const countries=[{n:"Algeria",f:"🇩🇿"},{n:"Angola",f:"🇦🇴"},{n:"Benin",f:"🇧🇯"},{n:"Botswana",f:"🇧🇼"},
+  {n:"Burkina Faso",f:"🇧🇫"},{n:"Burundi",f:"🇧🇮"},{n:"Cabo Verde",f:"🇨🇻"},
+  {n:"Cameroon",f:"🇨🇲"},{n:"Central African Republic",f:"🇨🇫"},{n:"Chad",f:"🇹🇩"},
+  {n:"Comoros",f:"🇰🇲"},{n:"Congo (Republic)",f:"🇨🇬"},{n:"Congo (DRC)",f:"🇨🇩"},
+  {n:"Côte d’Ivoire",f:"🇨🇮"},{n:"Djibouti",f:"🇩🇯"},{n:"Egypt",f:"🇪🇬"},
+  {n:"Equatorial Guinea",f:"🇬🇶"},{n:"Eritrea",f:"🇪🇷"},{n:"Eswatini",f:"🇸🇿"},
+  {n:"Ethiopia",f:"🇪🇹"},{n:"Gabon",f:"🇬🇦"},{n:"Gambia",f:"🇬🇲"},
+  {n:"Ghana",f:"🇬🇭"},{n:"Guinea",f:"🇬🇳"},{n:"Guinea-Bissau",f:"🇬🇼"},
+  {n:"Kenya",f:"🇰🇪"},{n:"Lesotho",f:"🇱🇸"},{n:"Liberia",f:"🇱🇷"},
+  {n:"Libya",f:"🇱🇾"},{n:"Madagascar",f:"🇲🇬"},{n:"Malawi",f:"🇲🇼"},
+  {n:"Mali",f:"🇲🇱"},{n:"Mauritania",f:"🇲🇷"},{n:"Mauritius",f:"🇲🇺"},
+  {n:"Morocco",f:"🇲🇦"},{n:"Mozambique",f:"🇲🇿"},{n:"Namibia",f:"🇳🇦"},
+  {n:"Niger",f:"🇳🇪"},{n:"Nigeria",f:"🇳🇬"},{n:"Rwanda",f:"🇷🇼"},
+  {n:"São Tomé and Príncipe",f:"🇸🇹"},{n:"Senegal",f:"🇸🇳"},{n:"Seychelles",f:"🇸🇨"},
+  {n:"Sierra Leone",f:"🇸🇱"},{n:"Somalia",f:"🇸🇴"},{n:"South Africa",f:"🇿🇦"},
+  {n:"South Sudan",f:"🇸🇸"},{n:"Sudan",f:"🇸🇩"},{n:"Tanzania",f:"🇹🇿"},
+  {n:"Togo",f:"🇹🇬"},{n:"Tunisia",f:"🇹🇳"},{n:"Uganda",f:"🇺🇬"},
+  {n:"Zambia",f:"🇿🇲"},{n:"Zimbabwe",f:"🇿🇼"}];
 
-  <main>
-    <div id="grid" class="grid"></div>
-  </main>
+  // Only link to pages that exist. Right now, just Senegal.
+  const available = new Set(['senegal']);
 
-  <footer>© IonAfrica Foundation</footer>
+  const grid=document.getElementById('grid');
+  const searchInput=document.getElementById('search');
 
-  <script>
-    // 👉 If you have your PayPal link, paste it here between the quotes:
-    const PAYPAL_LINK = "";
+  function slugify(name){
+    return name.toLowerCase()
+      .replaceAll(/[\u2019'’]/g,'')
+      .replaceAll(/[^a-z0-9]+/g,'-')
+      .replace(/(^-|-$)/g,'');
+  }
 
-    const countries=[{n:"Senegal",f:"🇸🇳"},{n:"Kenya",f:"🇰🇪"},{n:"Ghana",f:"🇬🇭"},{n:"Morocco",f:"🇲🇦"},{n:"South Africa",f:"🇿🇦"}];
-
-    const grid=document.getElementById('grid');
-    function render(list){
-      grid.innerHTML='';
-      list.forEach(c=>{
-        const div=document.createElement('div');
-        div.className='card';
-        div.innerHTML=`<div class="flag">${c.f}</div><div>${c.n}</div>`;
-        grid.appendChild(div);
-      });
-    }
-    render(countries);
-
-    document.getElementById('search').addEventListener('input',e=>{
-      const q=e.target.value.toLowerCase();
-      render(countries.filter(c=>c.n.toLowerCase().includes(q)));
-    });
-
-    document.getElementById('donateBtn').addEventListener('click',e=>{
-      e.preventDefault();
-      if(PAYPAL_LINK){
-        window.open(PAYPAL_LINK,'_blank');
+  function render(list){
+    grid.innerHTML='';
+    list.forEach(c=>{
+      const slug=slugify(c.n);
+      const card=document.createElement('a');
+      card.className='card';
+      card.innerHTML=`<span class="flag">${c.f}</span><div class="name">${c.n}</div>`;
+      if(available.has(slug)){
+        card.href=`countries/${slug}.html`;
       }else{
-        alert('PayPal link not set yet. Add it later!');
+        card.href='#';
+        card.addEventListener('click',e=>{
+          e.preventDefault();
+          alert(c.n + " page is coming soon.");
+        });
       }
+      grid.appendChild(card);
     });
-  </script>
-</body>
-</html>
+  }
+  render(countries);
+
+  searchInput.addEventListener('input',e=>{
+    const q=e.target.value.trim().toLowerCase();
+    render(countries.filter(c=>c.n.toLowerCase().includes(q)));
+  });
+
+  // Donate button: PayPal link if set, else open QR image (paypal-qr.jpg) in a new tab
+  const donateBtn=document.getElementById('donateBtn');
+  donateBtn.addEventListener('click',e=>{
+    e.preventDefault();
+    if(PAYPAL_LINK){
+      // If it's a PayPal.Me link, optionally prompt for amount
+      if(/paypal\.me/i.test(PAYPAL_LINK)){
+        const amt=prompt("Enter donation amount (USD):","25");
+        const url=(amt && !isNaN(amt)) ? `${PAYPAL_LINK}/${amt}` : PAYPAL_LINK;
+        window.open(url,'_blank','noopener');
+      }else{
+        window.open(PAYPAL_LINK,'_blank','noopener');
+      }
+    }else{
+      window.open('paypal-qr.jpg','_blank','noopener'); // fallback to QR image
+    }
+  });
+</script>
