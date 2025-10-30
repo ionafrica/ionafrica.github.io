@@ -5,49 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>IonAfrica – Flags & Stories</title>
   <style>
-    :root{
-      --bg:#fdf6ec; --ink:#222; --muted:#666;
-      --grad1:#00853f; --grad2:#fcd116; --grad3:#e8112d;
-      --card:#fff; --ring:#ddd;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-    header{
-      background:linear-gradient(90deg,var(--grad1),var(--grad2),var(--grad3));
-      color:#fff; text-align:center; padding:32px 16px
-    }
-    header h1{margin:0 0 8px; font-size:28px}
-    header p{margin:0; opacity:.95}
-    .bar{display:flex; gap:12px; max-width:1100px; margin:16px auto; padding:0 16px; flex-wrap:wrap; align-items:center; justify-content:center}
-    .search{
-      flex:1 1 360px;
-      display:flex; align-items:center; gap:8px;
-      background:var(--card); border:1px solid var(--ring); border-radius:12px; padding:10px 12px;
-    }
-    .search input{border:0; outline:0; width:100%; font-size:16px; background:transparent}
-    .btn{
-      display:inline-block; padding:12px 18px; border-radius:12px; border:1px solid #333; background:#fff; text-decoration:none; color:#111; font-weight:600
-    }
-    main{max-width:1100px; margin:8px auto 48px; padding:0 16px}
-    .grid{
-      display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(150px,1fr))
-    }
-    .card{
-      background:var(--card); border:1px solid var(--ring); border-radius:16px; padding:14px; text-align:center;
-      box-shadow:0 1px 2px rgba(0,0,0,.06)
-    }
-    .flag{font-size:44px; line-height:1.1; display:block}
-    .name{margin-top:8px; font-size:15px}
-    footer{margin:40px 0; color:var(--muted); text-align:center; font-size:14px}
-
-    /* Simple modal for QR */
-    .modal-backdrop{
-      position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; padding:16px; z-index:50
-    }
-    .modal{background:#fff; border-radius:16px; padding:18px; max-width:420px; width:100%; text-align:center}
-    .modal img{max-width:100%; border-radius:12px}
-    .modal h3{margin:6px 0 8px}
-    .close{margin-top:10px}
+    body{margin:0;font-family:Arial,sans-serif;background:#fdf6ec;color:#222}
+    header{background:linear-gradient(90deg,#00853f,#fcd116,#e8112d);color:#fff;text-align:center;padding:32px}
+    h1{margin:0 0 8px;font-size:28px}
+    .search{display:flex;justify-content:center;gap:8px;margin:16px}
+    .search input{padding:10px 12px;border-radius:8px;border:1px solid #ccc;width:240px}
+    .btn{padding:12px 18px;border:1px solid #333;border-radius:12px;text-decoration:none;color:#111;background:#fff}
+    .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));max-width:900px;margin:0 auto}
+    .card{background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;text-align:center}
+    .flag{font-size:40px}
+    footer{text-align:center;margin:32px;color:#666}
   </style>
 </head>
 <body>
@@ -56,108 +23,48 @@
     <p>Discover Africa’s flags & stories — bilingual (EN/FR) coming next.</p>
   </header>
 
-  <div class="bar">
-    <div class="search">
-      <span>🔎</span>
-      <input id="search" type="text" placeholder="Search a country (e.g., Senegal, Kenya, Maroc) …" aria-label="Search countries">
-    </div>
-    <!-- Donate button opens your QR immediately -->
-    <a href="#" class="btn" id="donateBtn">Donate (open amount)</a>
+  <div class="search">
+    <input id="search" type="text" placeholder="Search a country…" />
+    <a href="#" class="btn" id="donateBtn">Donate</a>
   </div>
 
   <main>
-    <div id="grid" class="grid" aria-live="polite"></div>
-    <p id="empty" style="display:none; text-align:center; color:#666; margin:18px 0;">
-      No matches. Try another country name.
-    </p>
+    <div id="grid" class="grid"></div>
   </main>
-
-  <!-- QR Modal -->
-  <div id="qrBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
-    <div class="modal">
-      <h3 id="qrTitle">Donate via PayPal</h3>
-      <!-- Make sure you uploaded your image as paypal-qr.jpg -->
-      <img src="paypal-qr.jpg" alt="PayPal Donate QR - IonAfrica">
-      <p>Scan. Pay. Go.</p>
-      <button class="btn close" id="closeQR">Close</button>
-    </div>
-  </div>
 
   <footer>© IonAfrica Foundation</footer>
 
   <script>
-    // If later you get a direct PayPal link, put it here and the button will open PayPal in a new tab:
-    // const PAYPAL_LINK = "https://www.paypal.me/IonAfrica";
-    const PAYPAL_LINK = ""; // leave empty to use the QR modal
+    // 👉 If you have your PayPal link, paste it here between the quotes:
+    const PAYPAL_LINK = "";
 
-    // Africa countries with flag emoji (54)
-    const countries = [
-      {n:"Algeria", f:"🇩🇿"}, {n:"Angola", f:"🇦🇴"}, {n:"Benin", f:"🇧🇯"}, {n:"Botswana", f:"🇧🇼"},
-      {n:"Burkina Faso", f:"🇧🇫"}, {n:"Burundi", f:"🇧🇮"}, {n:"Cabo Verde", f:"🇨🇻"},
-      {n:"Cameroon", f:"🇨🇲"}, {n:"Central African Republic", f:"🇨🇫"}, {n:"Chad", f:"🇹🇩"},
-      {n:"Comoros", f:"🇰🇲"}, {n:"Congo (Republic)", f:"🇨🇬"}, {n:"Congo (DRC)", f:"🇨🇩"},
-      {n:"Côte d’Ivoire", f:"🇨🇮"}, {n:"Djibouti", f:"🇩🇯"}, {n:"Egypt", f:"🇪🇬"},
-      {n:"Equatorial Guinea", f:"🇬🇶"}, {n:"Eritrea", f:"🇪🇷"}, {n:"Eswatini", f:"🇸🇿"},
-      {n:"Ethiopia", f:"🇪🇹"}, {n:"Gabon", f:"🇬🇦"}, {n:"Gambia", f:"🇬🇲"},
-      {n:"Ghana", f:"🇬🇭"}, {n:"Guinea", f:"🇬🇳"}, {n:"Guinea-Bissau", f:"🇬🇼"},
-      {n:"Kenya", f:"🇰🇪"}, {n:"Lesotho", f:"🇱🇸"}, {n:"Liberia", f:"🇱🇷"},
-      {n:"Libya", f:"🇱🇾"}, {n:"Madagascar", f:"🇲🇬"}, {n:"Malawi", f:"🇲🇼"},
-      {n:"Mali", f:"🇲🇱"}, {n:"Mauritania", f:"🇲🇷"}, {n:"Mauritius", f:"🇲🇺"},
-      {n:"Morocco", f:"🇲🇦"}, {n:"Mozambique", f:"🇲🇿"}, {n:"Namibia", f:"🇳🇦"},
-      {n:"Niger", f:"🇳🇪"}, {n:"Nigeria", f:"🇳🇬"}, {n:"Rwanda", f:"🇷🇼"},
-      {n:"São Tomé and Príncipe", f:"🇸🇹"}, {n:"Senegal", f:"🇸🇳"}, {n:"Seychelles", f:"🇸🇨"},
-      {n:"Sierra Leone", f:"🇸🇱"}, {n:"Somalia", f:"🇸🇴"}, {n:"South Africa", f:"🇿🇦"},
-      {n:"South Sudan", f:"🇸🇸"}, {n:"Sudan", f:"🇸🇩"}, {n:"Tanzania", f:"🇹🇿"},
-      {n:"Togo", f:"🇹🇬"}, {n:"Tunisia", f:"🇹🇳"}, {n:"Uganda", f:"🇺🇬"},
-      {n:"Zambia", f:"🇿🇲"}, {n:"Zimbabwe", f:"🇿🇼"}
-    ];
+    const countries=[{n:"Senegal",f:"🇸🇳"},{n:"Kenya",f:"🇰🇪"},{n:"Ghana",f:"🇬🇭"},{n:"Morocco",f:"🇲🇦"},{n:"South Africa",f:"🇿🇦"}];
 
-    // Render grid
-    const grid = document.getElementById('grid');
-    const empty = document.getElementById('empty');
-
-    function slugify(name){
-      return name.toLowerCase()
-        .replaceAll(/[\u2019'’]/g,'')
-        .replaceAll(/[^a-z0-9]+/g,'-')
-        .replace(/(^-|-$)/g,'');
-    }
-
+    const grid=document.getElementById('grid');
     function render(list){
-      grid.innerHTML = '';
-      if(!list.length){ empty.style.display='block'; return; }
-      empty.style.display='none';
+      grid.innerHTML='';
       list.forEach(c=>{
-        const a = document.createElement('a');
-        a.className='card';
-        a.href = `countries/${slugify(c.n)}.html`; // future per-country pages
-        a.innerHTML = `<span class="flag">${c.f}</span><div class="name">${c.n}</div>`;
-        grid.appendChild(a);
+        const div=document.createElement('div');
+        div.className='card';
+        div.innerHTML=`<div class="flag">${c.f}</div><div>${c.n}</div>`;
+        grid.appendChild(div);
       });
     }
     render(countries);
 
-    // Search
-    document.getElementById('search').addEventListener('input', e=>{
-      const q = e.target.value.trim().toLowerCase();
-      render(countries.filter(c => c.n.toLowerCase().includes(q)));
+    document.getElementById('search').addEventListener('input',e=>{
+      const q=e.target.value.toLowerCase();
+      render(countries.filter(c=>c.n.toLowerCase().includes(q)));
     });
 
-    // Donate button behavior: open PayPal link if present, else show QR modal
-    const donateBtn = document.getElementById('donateBtn');
-    const backdrop = document.getElementById('qrBackdrop');
-    const closeQR = document.getElementById('closeQR');
-
-    donateBtn.addEventListener('click', function(e){
+    document.getElementById('donateBtn').addEventListener('click',e=>{
       e.preventDefault();
       if(PAYPAL_LINK){
-        window.open(PAYPAL_LINK, '_blank', 'noopener');
+        window.open(PAYPAL_LINK,'_blank');
       }else{
-        backdrop.style.display='flex';
+        alert('PayPal link not set yet. Add it later!');
       }
     });
-    closeQR.addEventListener('click', ()=>backdrop.style.display='none');
-    backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) backdrop.style.display='none'; });
   </script>
 </body>
 </html>
